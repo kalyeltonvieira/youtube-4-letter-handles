@@ -1,0 +1,6 @@
+{
+  "name": "yt.handles — Rare 4L YouTube Handle Vault & Live Checker",
+  "description": "Plataforma dark-mode com estética Apple Glassmorphism para explorar, copiar em 1 clique e testar a disponibilidade em tempo real de usernames raros de 4 letras para o YouTube.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
