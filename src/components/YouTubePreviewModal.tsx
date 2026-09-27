@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Check, Copy, ExternalLink, Globe, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 import { HandleItem } from '../data/usernames';
+import { Translations } from '../i18n/translations';
 
 export interface ProbeStatus {
   state: 'idle' | 'loading' | 'available' | 'taken';
@@ -16,6 +17,7 @@ interface YouTubePreviewModalProps {
   probeStatus?: ProbeStatus;
   onCopyAndTest: (item: HandleItem) => void;
   copiedHandle: string | null;
+  t: Translations;
 }
 
 export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
@@ -25,6 +27,7 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
   probeStatus,
   onCopyAndTest,
   copiedHandle,
+  t,
 }) => {
   if (!item) return null;
 
@@ -47,18 +50,22 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
             <div className="text-xs text-white/50 font-mono-tabular">
               <span>{item.indexCode}</span>
               <span className="mx-2" aria-hidden="true">·</span>
-              <span>Série {item.firstLetter}</span>
+              <span>
+                {t.previewModal.seriesLabel} {item.firstLetter}
+              </span>
               <span className="mx-2" aria-hidden="true">·</span>
-              <span>Padrão {item.pattern}</span>
+              <span>
+                {t.previewModal.patternLabel} {item.pattern}
+              </span>
             </div>
             <h2 className="text-lg font-semibold tracking-tight text-white mt-1">
-              Simulador de Identificador do YouTube
+              {t.previewModal.title}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-white/60 hover:text-white hover:bg-white/[0.08] transition-colors"
-            aria-label="Fechar simulador"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-white/60 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+            aria-label={t.previewModal.closeAria}
           >
             <X className="w-5 h-5" />
           </button>
@@ -82,19 +89,19 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
               <div className={`${fontClass} flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[#AAAAAA] mt-1`}>
                 <span className="text-white font-medium">@{item.handle}</span>
                 <span aria-hidden="true">·</span>
-                <span className="font-mono-tabular">124 mil inscritos</span>
+                <span className="font-mono-tabular">{t.previewModal.subscribersMock}</span>
                 <span aria-hidden="true">·</span>
-                <span className="font-mono-tabular">48 vídeos</span>
+                <span className="font-mono-tabular">{t.previewModal.videosMock}</span>
               </div>
               <p className={`${fontClass} text-xs text-[#888888] mt-2 line-clamp-1`}>
-                youtube.com/@{item.handle} · Canal oficial com identificador curto de 4 letras.
+                {t.previewModal.channelBioMock(item.handle)}
               </p>
             </div>
 
             {/* Subscribe Mock Button */}
             <div className="shrink-0">
-              <span className={`${fontClass} inline-flex items-center px-4 py-2 rounded-full bg-[#F1F1F1] text-[#0F0F0F] text-xs font-medium`}>
-                Inscrever-se
+              <span className={`${fontClass} inline-flex items-center px-4 py-2 rounded-full bg-[#F1F1F1] text-[#0F0F0F] text-xs font-medium whitespace-nowrap`}>
+                {t.previewModal.subscribeBtn}
               </span>
             </div>
           </div>
@@ -111,23 +118,23 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
               {status === 'loading' && (
                 <span className="inline-flex items-center gap-1.5 text-amber-300">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Consultando YouTube...
+                  {t.previewModal.consultingYt}
                 </span>
               )}
               {status === 'available' && (
                 <span className="inline-flex items-center gap-1.5 text-emerald-400">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  Livre no YouTube · HTTP {probeStatus?.httpStatus || 404} ({probeStatus?.latencyMs}ms)
+                  {t.previewModal.freeOnYt(probeStatus?.httpStatus || 404, probeStatus?.latencyMs)}
                 </span>
               )}
               {status === 'taken' && (
                 <span className="inline-flex items-center gap-1.5 text-red-400">
                   <AlertCircle className="w-3.5 h-3.5" />
-                  Canal Ativo · HTTP {probeStatus?.httpStatus || 200} ({probeStatus?.latencyMs}ms)
+                  {t.previewModal.activeChannel(probeStatus?.httpStatus || 200, probeStatus?.latencyMs)}
                 </span>
               )}
               {status === 'idle' && (
-                <span className="text-white/40">Ainda não verificado nesta sessão</span>
+                <span className="text-white/40">{t.previewModal.notCheckedYet}</span>
               )}
             </div>
           </div>
@@ -140,7 +147,11 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
             className="flex-1 min-w-[200px] inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-medium text-sm hover:bg-white/90 transition-colors cursor-pointer whitespace-nowrap"
           >
             {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-            <span>{isCopied ? `Copiado (@${item.handle}) & Testado` : `Copiar @${item.handle} & Testar Agora`}</span>
+            <span>
+              {isCopied
+                ? t.previewModal.copiedAndTestedBtn(item.handle)
+                : t.previewModal.copyAndTestNowBtn(item.handle)}
+            </span>
           </button>
 
           <a
@@ -149,7 +160,7 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-sm font-medium text-white transition-colors whitespace-nowrap"
           >
-            <span>Abrir @{item.handle}</span>
+            <span>{t.previewModal.openHandleBtn(item.handle)}</span>
             <ExternalLink className="w-4 h-4 text-white/60" />
           </a>
 
@@ -159,7 +170,7 @@ export const YouTubePreviewModal: React.FC<YouTubePreviewModalProps> = ({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#FF0033]/15 hover:bg-[#FF0033]/25 border border-[#FF0033]/30 text-sm font-medium text-red-200 transition-colors whitespace-nowrap"
           >
-            <span>Tentar Registrar no YouTube</span>
+            <span>{t.previewModal.tryRegisterYtBtn}</span>
             <ExternalLink className="w-4 h-4 text-red-300" />
           </a>
         </div>
